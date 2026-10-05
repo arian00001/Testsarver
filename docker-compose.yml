@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aibuilder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  engine:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8787:8787"
+    depends_on:
+      - postgres
+    volumes:
+      - ./workspaces:/app/workspaces
+
+volumes:
+  postgres_data:
